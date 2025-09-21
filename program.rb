@@ -82,7 +82,11 @@ def find_discrete_logarithm(alpha, beta, modulus)
     raise ArgumentError, "alpha #{alpha} not invertible mod #{modulus}." unless find_greatest_common_divisor(alpha, modulus) == 1
     raise ArgumentError, "beta #{beta} lies outside the multiplicative group mod #{modulus}." unless find_greatest_common_divisor(beta, modulus) == 1
     
+    # trivial cases
     return 0 if beta % modulus == 1
+    return nil if alpha % modulus == 0 && beta % modulus != 0
+    return 1 if alpha % modulus == 0 && beta % modulus == 0
+    return nil if alpha % modulus == 1
     
     # only if modulus is prime
     group_order = modulus - 1

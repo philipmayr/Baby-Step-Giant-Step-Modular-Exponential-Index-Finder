@@ -1,4 +1,4 @@
-# Baby-Step Giant-Step Modular Exponential Index (Discrete Logarithm) Finder
+# Baby-Step Giant-Step Discrete Logarithm Finder
 
 # find 𝑥 where 𝛼^𝑥 ≡ 𝛽 mod 𝑛
 
@@ -17,7 +17,7 @@ def find_whole_number_square_root(square)
     while lower_bound < upper_bound + 1
         midpoint = (lower_bound + upper_bound) / 2
         midpoint_squared = midpoint * midpoint
-    
+        
         if midpoint_squared == square
             return midpoint
         elsif midpoint_squared < square
@@ -26,7 +26,7 @@ def find_whole_number_square_root(square)
             upper_bound = midpoint - 1
         end
     end
-
+    
     return upper_bound
 end
 
@@ -35,7 +35,7 @@ def exponentiate_modularly(base, exponent, modulus)
     return 1 if exponent == 0
         
     base %= modulus
-
+    
     power = 1
     
     while exponent > 0
@@ -47,16 +47,16 @@ def exponentiate_modularly(base, exponent, modulus)
     
     return power
 end
- 
+
 def find_modular_multiplicative_inverse(base, modulus)
     return 0 if modulus == 1
     return nil if modulus < 1 || base == 0
-
+    
     base %= modulus
     
     last_remainder, remainder = base, modulus
     last_modular_multiplicative_inverse_of_base, modular_multiplicative_inverse_of_base = 1, 0
-
+    
     while remainder != 0
         quotient = last_remainder / remainder
         
@@ -68,7 +68,7 @@ def find_modular_multiplicative_inverse(base, modulus)
         modular_multiplicative_inverse_of_base = last_modular_multiplicative_inverse_of_base - quotient * modular_multiplicative_inverse_of_base
         last_modular_multiplicative_inverse_of_base = saved_modular_multiplicative_inverse_of_base
     end
-
+    
     return nil if last_remainder != 1
     
     return last_modular_multiplicative_inverse_of_base % modulus
@@ -79,7 +79,7 @@ def find_discrete_logarithm(alpha, beta, modulus)
     # raise ArgumentError, "modulus #{modulus} must be prime." unless modulus.prime?
     raise ArgumentError, "alpha #{alpha} not invertible mod #{modulus}." unless find_greatest_common_divisor(alpha, modulus) == 1
     raise ArgumentError, "beta #{beta} lies outside the multiplicative group mod #{modulus}." unless find_greatest_common_divisor(beta, modulus) == 1
-
+    
     return 0 if beta % modulus == 1
     
     # only if modulus is prime
@@ -87,7 +87,7 @@ def find_discrete_logarithm(alpha, beta, modulus)
     
     raise ArgumentError, "beta #{beta} lies outside the group of order #{group_order}." unless exponentiate_modularly(beta, group_order, modulus) == 1
     
-    square_root = find_whole_number_square_root(modulus - 1)
+    square_root = find_whole_number_square_root(group_order)
     step_upper_bound = square_root * square_root == (group_order) ? square_root : square_root + 1
     
     baby_steps = {}

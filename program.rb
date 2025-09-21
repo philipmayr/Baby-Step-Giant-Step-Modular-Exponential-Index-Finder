@@ -88,11 +88,11 @@ def find_discrete_logarithm(alpha, beta, modulus)
     raise ArgumentError, "beta #{beta} lies outside the group of order #{group_order}." unless exponentiate_modularly(beta, group_order, modulus) == 1
     
     square_root = find_whole_number_square_root(group_order)
-    step_upper_bound = square_root * square_root == (group_order) ? square_root : square_root + 1
+    square_root_of_group_order = square_root * square_root == (group_order) ? square_root : square_root + 1
     
     baby_steps = {}
     
-    for index in 0...step_upper_bound
+    for index in 0...square_root_of_group_order_upper_step_bound
         baby_step = exponentiate_modularly(alpha, index, modulus)
         baby_steps[baby_step] = index
     end
@@ -101,15 +101,15 @@ def find_discrete_logarithm(alpha, beta, modulus)
     
     return nil unless modular_multiplicative_inverse_of_alpha
     
-    modular_multiplicative_inverse_of_step_bounded_power_of_alpha = exponentiate_modularly(modular_multiplicative_inverse_of_alpha, step_upper_bound, modulus)
+    modular_multiplicative_inverse_of_square_root_of_group_order_upper_step_bounded_power_of_alpha = exponentiate_modularly(modular_multiplicative_inverse_of_alpha, square_root_of_group_order_upper_step_bound, modulus)
     
     # giant steps
     
-    for index in 0...step_upper_bound
-        gamma = (beta * exponentiate_modularly(modular_multiplicative_inverse_of_step_bounded_power_of_alpha, index, modulus)) % modulus
+    for index in 0...square_root_of_group_order_upper_step_bound
+        gamma = (beta * exponentiate_modularly(modular_multiplicative_inverse_of_square_root_of_group_order_upper_step_bounded_power_of_alpha, index, modulus)) % modulus
         
         if baby_steps.key?(gamma)
-            return (index * step_upper_bound + baby_steps[gamma]) % (group_order)
+            return (index * square_root_of_group_order_upper_step_bound + baby_steps[gamma]) % (group_order)
         end
     end
     

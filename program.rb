@@ -3,7 +3,9 @@
 # find 𝑥 where 𝛼^𝑥 ≡ 𝛽 mod 𝑛
 
 def find_greatest_common_divisor(a, b)
-    b == 0 ? a : find_greatest_common_divisor(b, a % b)
+    a, b = b, a % b while b != 0
+    
+    return a
 end
 
 def find_whole_number_square_root(square)
@@ -88,13 +90,16 @@ def find_discrete_logarithm(alpha, beta, modulus)
     raise ArgumentError, "beta #{beta} lies outside the group of order #{group_order}." unless exponentiate_modularly(beta, group_order, modulus) == 1
     
     square_root = find_whole_number_square_root(group_order)
-    square_root_of_group_order = square_root * square_root == (group_order) ? square_root : square_root + 1
+    square_root_of_group_order_upper_step_bound = square_root * square_root == (group_order) ? square_root : square_root + 1
     
     baby_steps = {}
     
+    baby_step = 1
+    
     for index in 0...square_root_of_group_order_upper_step_bound
-        baby_step = exponentiate_modularly(alpha, index, modulus)
         baby_steps[baby_step] = index
+        
+        baby_step = (baby_step * alpha) % modulus
     end
     
     modular_multiplicative_inverse_of_alpha = find_modular_multiplicative_inverse(alpha, modulus)
@@ -103,14 +108,16 @@ def find_discrete_logarithm(alpha, beta, modulus)
     
     modular_multiplicative_inverse_of_square_root_of_group_order_upper_step_bounded_power_of_alpha = exponentiate_modularly(modular_multiplicative_inverse_of_alpha, square_root_of_group_order_upper_step_bound, modulus)
     
+    gamma = beta % modulus
+    
     # giant steps
     
     for index in 0...square_root_of_group_order_upper_step_bound
-        gamma = (beta * exponentiate_modularly(modular_multiplicative_inverse_of_square_root_of_group_order_upper_step_bounded_power_of_alpha, index, modulus)) % modulus
-        
         if baby_steps.key?(gamma)
             return (index * square_root_of_group_order_upper_step_bound + baby_steps[gamma]) % (group_order)
         end
+        
+        gamma = (gamma * modular_multiplicative_inverse_of_square_root_of_group_order_upper_step_bounded_power_of_alpha) % modulus
     end
     
     return nil

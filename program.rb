@@ -76,7 +76,7 @@ def find_modular_multiplicative_inverse(base, modulus)
     return last_modular_multiplicative_inverse_of_base % modulus
 end
 
-def find_discrete_logarithm(alpha, beta, modulus)
+def find_exponential_index(alpha, beta, modulus)
     raise ArgumentError, "modulus #{modulus} must be greater than or equal to two (2)." if modulus < 2
     # raise ArgumentError, "modulus #{modulus} must be prime." unless modulus.prime?
     raise ArgumentError, "alpha #{alpha} not invertible mod #{modulus}." unless find_greatest_common_divisor(alpha, modulus) == 1
@@ -91,7 +91,7 @@ def find_discrete_logarithm(alpha, beta, modulus)
     # only if modulus is prime
     group_order = modulus - 1
     
-    raise ArgumentError, "beta #{beta} lies outside the group of order #{group_order}." unless exponentiate_modularly(beta, group_order, modulus) == 1
+    # raise ArgumentError, "beta #{beta} lies outside the group of order #{group_order}." unless exponentiate_modularly(beta, group_order, modulus) == 1
     
     square_root = find_whole_number_square_root(group_order)
     square_root_of_group_order_upper_step_bound = square_root * square_root == (group_order) ? square_root : square_root + 1
@@ -136,6 +136,8 @@ beta = gets.chomp.to_i
 print "Enter modulus: "
 modulus = gets.chomp.to_i
 
-discrete_logarithm = find_discrete_logarithm(alpha, beta, modulus)
+exponential_index = find_exponential_index(alpha, beta, modulus)
 
-print(discrete_logarithm)
+puts
+
+print "#{exponential_index} is the exponential index (discrete logarithm) of #{beta} in base #{alpha} mod #{modulus}."

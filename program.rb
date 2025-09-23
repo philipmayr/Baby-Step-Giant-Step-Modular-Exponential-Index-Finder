@@ -98,12 +98,14 @@ def find_exponential_index(alpha, beta, modulus)
     
     baby_steps = {}
     
-    baby_step = 1
+    index = 1
     
-    for index in 0...square_root_of_group_order_upper_step_bound
-        baby_steps[baby_step] = index
+    # baby steps
+    
+    for baby_step in 0...square_root_of_group_order_upper_step_bound
+        baby_steps[index] = baby_step
         
-        baby_step = (baby_step * alpha) % modulus
+        index = (index * alpha) % modulus
     end
     
     modular_multiplicative_inverse_of_alpha = find_modular_multiplicative_inverse(alpha, modulus)
@@ -116,9 +118,9 @@ def find_exponential_index(alpha, beta, modulus)
     
     # giant steps
     
-    for index in 0...square_root_of_group_order_upper_step_bound
+    for giant_step in 0...square_root_of_group_order_upper_step_bound
         if baby_steps.key?(gamma)
-            return (index * square_root_of_group_order_upper_step_bound + baby_steps[gamma]) % (group_order)
+            return (giant_step * square_root_of_group_order_upper_step_bound + baby_steps[gamma]) % (group_order)
         end
         
         gamma = (gamma * modular_multiplicative_inverse_of_square_root_of_group_order_upper_step_bounded_power_of_alpha) % modulus
